@@ -12,9 +12,13 @@ Quick overview
 
   - `examples/common/Seeed xiao ESP32-c3 base.yaml` — shared base configuration (board, wifi, API/OTA, sensors, antenna output).
 
+  - `examples/common/Seeed xiao ESP32-c3 base IRK.yaml` — IRK capture variant base configuration.
+
+![Seeed XIAO ESP32-C3 PCB](docs/seeed%20c3%20pcb.jpg)
+
 ## How to use the base package
 
-The generic device YAML includes the ESP32-C3 base configuration via `packages` and provide substitutions:
+The generic device YAML includes the ESP32-C3 base configuration via `packages` and provides substitutions:
 
 ```yaml
 substitutions:
@@ -23,15 +27,11 @@ substitutions:
   api_key: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
   ota_password: "ChangeMe!2025"
 
-esphome:
-  name: ${device_name}
-  friendly_name: ${friendly_name}
-
 packages:
   device: !include "common/Seeed xiao ESP32-c3 base.yaml"
 ```
 
-The base configuration uses the `${api_key}` and `${ota_password}` from your device specific YAML, and uses `!secret` for Wi‑Fi values (managed by ESPHome Builder).
+The base configuration uses the `${api_key}` and `${ota_password}` from your device specific YAML, uses `!secret` for Wi‑Fi values (managed by ESPHome Builder), and handles the `esphome:` section automatically.
 
 What the base config provides:
 
@@ -56,9 +56,22 @@ What the base config provides:
 This repository also includes an alternate configuration for capturing iPhone, Apple Watch, and Android BLE Identity Resolving Keys (IRKs):
 
 - **Base config**: `examples/common/Seeed xiao ESP32-c3 base IRK.yaml` — uses ESP-IDF framework with NimBLE for IRK capture
-- **Device example**: `examples/ESPHome device config IRK.yaml` — example device configuration for IRK capture
+- **Device example**: `examples/ESPHome device config C3 IRK.yaml` — minimal device configuration for IRK capture
 
 The IRK variant provides the same base features (antenna control, WiFi, sensors) but adds IRK capture functionality through the [irk-capture](https://github.com/DerekSeaman/irk-capture) external component.
+
+**Device YAML example for IRK capture:**
+
+```yaml
+substitutions:
+  device_name: esphomec3-irk
+  friendly_name: IRK Capture C3
+  api_key: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
+  ota_password: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
+
+packages:
+  device: !include "common/Seeed xiao ESP32-c3 base IRK.yaml"
+```
 
 **Key differences from the standard base:**
 
@@ -92,7 +105,7 @@ This is an **ESPHome Device Builder package** designed to work seamlessly with t
 
 3. Copy the `Seeed xiao ESP32-c3 base.yaml` file to the `config/esphome/common/` directory
    - For IRK capture functionality, use `Seeed xiao ESP32-c3 base IRK.yaml` instead (see [IRK Capture Variant](#irk-capture-variant) section)
-4. Create your device YAML using the exact contents of `examples/ESPHome device config.yaml`:
+4. Create your device YAML using the minimal structure shown above:
    - Update the `device_name` and `friendly_name` substitutions for your specific device
    - Generate new `api_key` and `ota_password` values (ESPHome Builder can generate these)
    - The file should include the base via `packages: device: !include "common/Seeed xiao ESP32-c3 base.yaml"`
@@ -103,6 +116,17 @@ This is an **ESPHome Device Builder package** designed to work seamlessly with t
 6. The device will automatically be discovered by Home Assistant
 
 **Note:** The base configuration uses `!secret` references for Wi-Fi credentials, which ESPHome Builder manages automatically. You only need to provide the `api_key` and `ota_password` substitutions in your device YAML. To get fresh API and OTA keys, I suggest creating a new device in ESPHome Device Builder (using any hardware model), then replace all of the YAML with my device file but re-use the fresh API/OTA keys.
+
+## Status LED Patterns
+
+The onboard LED (GPIO10) provides visual feedback about the device state:
+
+| Pattern | Meaning |
+|---------|---------|
+| Solid ON | Everything OK - WiFi connected, API connected with active client |
+| Slow blink (~1Hz) | Warning - WiFi connected but API client not connected/subscribed |
+| Fast blink (~2-3Hz) | Error - No WiFi connection |
+| Very fast blink (~10Hz) | Critical error during boot or OTA in progress |
 
 ## ESPHome Device Page
 
