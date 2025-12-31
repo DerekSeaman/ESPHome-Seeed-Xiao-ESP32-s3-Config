@@ -14,7 +14,7 @@ Quick overview
 
   - `examples/common/Seeed xiao ESP32-c3 base IRK.yaml` — IRK capture variant base configuration.
 
-![Seeed XIAO ESP32-C3 PCB](docs/seeed%20c3%20pcb.jpg)
+![Seeed XIAO ESP32-C3 PCB](docs/Seeed%20c3%20pcb.jpg)
 
 ## How to use the base package
 
