@@ -1,19 +1,19 @@
-# Seeed XIAO ESP32-C3 — C3 Base include (plain-English guide)
+# Seeed XIAO ESP32-S3 — S3 Base include (plain-English guide)
 
 Note: this project uses a project-level `README.md` at the repository root. For the high-level overview and ESPHome Builder setup instructions, see `../README.md`.
 
-This file documents the `Seeed xiao ESP32-c3 base.yaml` package used by device YAMLs in this repo. It explains each section and option in plain English for ESPHome builders so you can quickly understand, customize, and test C3 devices.
+This file documents the `Seeed xiao ESP32-s3 base.yaml` package used by device YAMLs in this repo. It explains each section and option in plain English for ESPHome builders so you can quickly understand, customize, and test S3 devices.
 
 Summary
 
-- Purpose: provide a reusable base configuration for Seeed XIAO ESP32‑C3 boards (esp32c3 variant) so device YAMLs can be small and device-specific.
-- Typical usage: a device YAML uses `packages: device: !include "common/Seeed xiao ESP32-c3 base.yaml"` and provides substitutions like `device_name`, `friendly_name`, `api_key`, and `ota_password`.
+- Purpose: provide a reusable base configuration for Seeed XIAO ESP32-S3 boards (esp32s3 variant) so device YAMLs can be small and device-specific.
+- Typical usage: a device YAML uses `packages: device: !include "common/Seeed xiao ESP32-s3 base.yaml"` and provides substitutions like `device_name`, `friendly_name`, `api_key`, and `ota_password`.
 
 Key sections and what they do
 
 - `esp32`
 
-  - `variant: esp32c3` and `board: seeed_xiao_esp32c3`: selects the C3 hardware and board definition.
+  - `variant: esp32s3` and `board: seeed_xiao_esp32s3`: selects the S3 hardware and board definition.
 
   - `framework: esp-idf`: uses ESP-IDF framework.
 
@@ -21,15 +21,13 @@ Key sections and what they do
 
   - `name: ${device_name}` and `friendly_name: ${friendly_name}`: the base config now includes these, so device YAMLs no longer need to define the `esphome:` section — just provide the substitutions.
 
-  - `on_boot`: runs actions when the device boots. The base toggles GPIO2 output used for antenna selection (turning the external antenna on/off). If you add hardware that uses this pin, be aware of these actions.
-
 - `logger`:
 
-  - `level: DEBUG`, `baud_rate: 115200`, `hardware_uart: USB_CDC` — controls serial logging level and port. Change `level` to `INFO` or `WARN` on stable devices to reduce logs.
+  - `level: DEBUG`, `baud_rate: 115200`, `hardware_uart: USB_SERIAL_JTAG` — controls serial logging level and port. The S3 uses USB_SERIAL_JTAG for native USB serial. Change `level` to `INFO` or `WARN` on stable devices to reduce logs.
 
 - `status_led`:
 
-  - Configures the board LED pin (GPIO10, inverted). This shows device status on boot and at runtime.
+  - Configures the board LED pin (GPIO21). This shows device status on boot and at runtime.
 
 - `api`:
 
@@ -70,17 +68,13 @@ Key sections and what they do
 
 - `sensor` / `text_sensor` / `time` / `globals`:
 
-  - Adds common sensors: uptime (converted to hours), internal temperature, Wi‑Fi RSSI, Wi‑Fi info (BSSID, IP, SSID, MAC), Wi-Fi disconnects (since boot), and SNTP time source.
+  - Adds common sensors: uptime (converted to hours), internal temperature, Wi-Fi RSSI, Wi-Fi info (BSSID, IP, SSID, MAC), Wi-Fi disconnects (since boot), and SNTP time source.
 
   - `globals`: defines `_wifi_disconnects_since_boot` counter (not restored on reboot) tracked by the Wi-Fi `on_disconnect` handler.
 
-- `switch` (External Antenna)
+- `button`:
 
-  - A template switch controls GPIO2 output to toggle internal/external antenna. The output itself is defined in the `output:` section.
-
-- `output`:
-
-  - Defines the actual GPIO2 output used for antenna selection. If you repurpose this pin, update this section and the `switch` actions accordingly.
+  - A restart button to reboot the device from Home Assistant.
 
 Substitutions and secrets
 
@@ -94,13 +88,13 @@ How device YAMLs use the base
 
   ```yaml
   substitutions:
-    device_name: esphomec3-garage
-    friendly_name: Garage C3
+    device_name: esphomes3-garage
+    friendly_name: Garage S3
     api_key: "..."
     ota_password: "..."
 
   packages:
-    device: !include "common/Seeed xiao ESP32-c3 base.yaml"
+    device: !include "common/Seeed xiao ESP32-s3 base.yaml"
   ```
 
   Note: The `esphome:` section is no longer needed in device YAMLs — the base config now includes `name:` and `friendly_name:` using the substitutions you provide.
@@ -108,8 +102,6 @@ How device YAMLs use the base
 Customization tips
 
 - To change board-specific settings (pins, outputs, sensors), edit the base file only if the change applies to all devices that include it. Otherwise override or extend in the device YAML.
-
-- If you need different antenna pin settings per device, remove antenna control from the base and define it per-device.
 
 - Reduce `logger` level from `DEBUG` to `INFO` in production to reduce serial noise.
 
@@ -124,6 +116,6 @@ See the main `README.md` for complete ESPHome Builder setup instructions.
 
 Notes and cautions
 
-- The base uses `!secret` for Wi‑Fi values which ESPHome Builder manages automatically.
+- The base uses `!secret` for Wi-Fi values which ESPHome Builder manages automatically.
 
 - The `api.encryption.key` and `ota.password` should be unique per device — ESPHome Builder can generate these for you.

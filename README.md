@@ -1,43 +1,43 @@
-# Seeed XIAO ESP32‑C3 ESPHome Device Builder Package
+# Seeed XIAO ESP32‑S3 ESPHome Device Builder Package
 
-This repository contains a reusable **ESPHome Device Builder package** for the Seeed XIAO ESP32‑C3 (esp32c3) boards. The project provides a shared base configuration package that can be included in device YAMLs to keep device files concise and consistent. The configuration is tailored for Home Assistant Bluetooth proxy and scanning functionality. I use it with the "Bermuda BLE Trilateration" HACS add-on for room-level presence detection.
+This repository contains a reusable **ESPHome Device Builder package** for the Seeed XIAO ESP32‑S3 (esp32s3) boards. The project provides a shared base configuration package that can be included in device YAMLs to keep device files concise and consistent. The configuration is tailored for Home Assistant Bluetooth proxy and scanning functionality. I use it with the "Bermuda BLE Trilateration" HACS add-on for room-level presence detection.
 
 Quick overview
 
-- Purpose: maintain one canonical, reusable base configuration for Seeed XIAO ESP32‑C3 boards and simple device examples that include it.
+- Purpose: maintain one canonical, reusable base configuration for Seeed XIAO ESP32‑S3 boards and simple device examples that include it.
 
 - Layout:
 
   - `examples/` — device example YAMLs and helpers.
 
-  - `examples/common/Seeed xiao ESP32-c3 base.yaml` — shared base configuration (board, wifi, API/OTA, sensors, antenna output).
+  - `examples/common/Seeed xiao ESP32-s3 base.yaml` — shared base configuration (board, wifi, API/OTA, sensors, antenna output).
 
-  - `examples/common/Seeed xiao ESP32-c3 base IRK.yaml` — IRK capture variant base configuration.
+  - `examples/common/Seeed xiao ESP32-s3 base IRK.yaml` — IRK capture variant base configuration.
 
-![Seeed XIAO ESP32-C3 PCB](docs/Seeed%20c3%20pcb.jpg)
+![Seeed XIAO ESP32-s3 PCB](docs/Seeed%20s3%20pcb.jpg)
 
 ## How to use the base package
 
-The generic device YAML includes the ESP32-C3 base configuration via `packages` and provides substitutions:
+The generic device YAML includes the ESP32-S3 base configuration via `packages` and provides substitutions:
 
 ```yaml
 substitutions:
-  device_name: esphomec3-garage
-  friendly_name: Garage C3
+  device_name: esphomes3-garage
+  friendly_name: Garage S3
   api_key: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
   ota_password: "ChangeMe!2025"
 
 packages:
-  device: !include "common/Seeed xiao ESP32-c3 base.yaml"
+  device: !include "common/Seeed xiao ESP32-s3 base.yaml"
 ```
 
 The base configuration uses the `${api_key}` and `${ota_password}` from your device specific YAML, uses `!secret` for Wi‑Fi values (managed by ESPHome Builder), and handles the `esphome:` section automatically.
 
 What the base config provides:
 
-- Board & SDK: selects `esp32c3` variant and `seeed_xiao_esp32c3` board with `esp-idf` framework.
+- Board & SDK: selects `esp32s3` variant and `seeed_xiao_esp32s3` board with `esp-idf` framework.
 
-- Boot actions: toggles GPIO2 used for antenna selection on boot.
+- Boot actions: none by default (add custom on_boot actions in your device YAML if needed).
 
 - Logger & status LED: configures serial log level (USB_CDC) and board LED (GPIO10) behavior.
 
@@ -52,14 +52,14 @@ What the base config provides:
 
 - Sensors: uptime, internal temperature, Wi‑Fi RSSI, Wi‑Fi info (BSSID, IP, SSID, MAC), Wi-Fi disconnects (since boot), and SNTP time.
 
-- Antenna control: a template switch manages the GPIO2 output defined in the base.
+- Restart button: allows rebooting the device from Home Assistant.
 
 ## IRK Capture Variant
 
 This repository also includes an alternate configuration for capturing iPhone, Apple Watch, and Android BLE Identity Resolving Keys (IRKs):
 
-- **Base config**: `examples/common/Seeed xiao ESP32-c3 base IRK.yaml` — uses ESP-IDF framework with NimBLE for IRK capture
-- **Device example**: `examples/ESPHome device config C3 IRK.yaml` — minimal device configuration for IRK capture
+- **Base config**: `examples/common/Seeed xiao ESP32-s3 base IRK.yaml` — uses ESP-IDF framework with NimBLE for IRK capture
+- **Device example**: `examples/ESPHome device config S3 IRK.yaml` — minimal device configuration for IRK capture
 
 The IRK variant provides the same base features (antenna control, WiFi, sensors) but adds IRK capture functionality through the [irk-capture](https://github.com/DerekSeaman/irk-capture) external component.
 
@@ -67,13 +67,13 @@ The IRK variant provides the same base features (antenna control, WiFi, sensors)
 
 ```yaml
 substitutions:
-  device_name: esphomec3-irk
-  friendly_name: IRK Capture C3
+  device_name: esphomes3-irk
+  friendly_name: IRK Capture S3
   api_key: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
   ota_password: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
 
 packages:
-  device: !include "common/Seeed xiao ESP32-c3 base IRK.yaml"
+  device: !include "common/Seeed xiao ESP32-s3 base IRK.yaml"
 ```
 
 **Key differences from the standard base:**
@@ -103,19 +103,19 @@ This is an **ESPHome Device Builder package** designed to work seamlessly with t
    config/
    └── esphome/
        └── common/
-           └── Seeed xiao ESP32-c3 base.yaml  ← Place the base config here
+           └── Seeed xiao ESP32-s3 base.yaml  ← Place the base config here
    ```
 
-3. Copy the `Seeed xiao ESP32-c3 base.yaml` file to the `config/esphome/common/` directory
-   - For IRK capture functionality, use `Seeed xiao ESP32-c3 base IRK.yaml` instead (see [IRK Capture Variant](#irk-capture-variant) section)
+3. Copy the `Seeed xiao ESP32-s3 base.yaml` file to the `config/esphome/common/` directory
+   - For IRK capture functionality, use `Seeed xiao ESP32-s3 base IRK.yaml` instead (see [IRK Capture Variant](#irk-capture-variant) section)
 4. Create your device YAML using the minimal structure shown above:
    - Update the `device_name` and `friendly_name` substitutions for your specific device
    - Generate new `api_key` and `ota_password` values (ESPHome Builder can generate these)
-   - The file should include the base via `packages: device: !include "common/Seeed xiao ESP32-c3 base.yaml"`
+   - The file should include the base via `packages: device: !include "common/Seeed xiao ESP32-s3 base.yaml"`
 5. ESPHome Builder automatically handles:
    - Wi-Fi secrets storage (no manual `secrets.yaml` needed)
    - Firmware compilation
-   - Initial upload to your ESP32-C3 device
+   - Initial upload to your ESP32-S3 device
 6. The device will automatically be discovered by Home Assistant
 
 **Note:** The base configuration uses `!secret` references for Wi-Fi credentials, which ESPHome Builder manages automatically. You only need to provide the `api_key` and `ota_password` substitutions in your device YAML. To get fresh API and OTA keys, I suggest creating a new device in ESPHome Device Builder (using any hardware model), then replace all of the YAML with my device file but re-use the fresh API/OTA keys.
@@ -140,7 +140,7 @@ Here's what the device looks like in Home Assistant's ESPHome integration:
 The device page shows:
 
 - **Device info**: Board type, firmware version, and MAC address
-- **Controls**: BLE Scan Profile selector (Aggressive/Balanced) and External Antenna toggle switch
+- **Controls**: BLE Scan Profile selector (Aggressive/Balanced) and Restart Device button
 - **Configuration**: Firmware management and OTA updates
 - **Diagnostic**: BSSID, internal temperature, IP address, MAC address, SSID, uptime, Wi-Fi disconnects (since boot), and Wi-Fi RSSI
 
@@ -153,7 +153,7 @@ Here's what the IRK capture variant looks like in Home Assistant:
 The IRK capture device page shows:
 
 - **Device info**: Board type, firmware version, and MAC address
-- **Controls**: BLE Advertising toggle, BLE Device Name input, BLE Profile selector, External Antenna toggle, and Generate New MAC button
+- **Controls**: BLE Advertising toggle, BLE Device Name input, BLE Profile selector, Generate New MAC button, and Restart Device button
 - **Sensors**: Device MAC (paired device address), Effective MAC (current BLE advertising address), and IRK (captured Identity Resolving Key)
 - **Configuration**: Firmware management and OTA updates
 - **Diagnostic**: BSSID, internal temperature, IP address, MAC address, SSID, uptime, Wi-Fi disconnects (since boot), and Wi-Fi RSSI

@@ -1,6 +1,6 @@
 esp32:
-  variant: esp32c3
-  board: seeed_xiao_esp32c3
+  variant: esp32s3
+  board: seeed_xiao_esp32s3
   framework:
     type: esp-idf
     version: recommended
@@ -26,11 +26,7 @@ esphome:
   friendly_name: ${friendly_name}
   project:
     name: "derekseaman.irk-capture"
-    version: "1.5.1"
-  on_boot:
-    priority: -10
-    then:
-      - output.turn_on: ant_gpio2  # HIGH → external antenna
+    version: "1.5.4"
 
 # IMPORTANT: Do NOT include esp32_ble:, esp32_ble_tracker:, or bluetooth_proxy: here.
 # The irk_capture component fully initializes and manages NimBLE itself.
@@ -38,7 +34,7 @@ esphome:
 logger:
   level: DEBUG
   baud_rate: 115200
-  hardware_uart: USB_CDC
+  hardware_uart: USB_SERIAL_JTAG
 
 api:
   encryption:
@@ -72,17 +68,10 @@ captive_portal:
 
 mdns:
 
-# Status LED (matches board)
+# Status LED on Seeed XIAO ESP32-S3 (GPIO21, user LED - active LOW)
 status_led:
   pin:
-    number: GPIO10
-    inverted: true
-
-# External antenna control
-output:
-  - platform: gpio
-    pin: GPIO2
-    id: ant_gpio2
+    number: GPIO21
 
 # Pull irk_capture external component (ESP-IDF NimBLE version)
 external_components:
@@ -137,15 +126,6 @@ switch:
       id: ble_advertising
       name: "BLE Advertising"
       restore_mode: ALWAYS_ON
-
-  - platform: template
-    name: "External Antenna"
-    optimistic: true
-    restore_mode: ALWAYS_ON
-    turn_on_action:
-      - output.turn_on: ant_gpio2   # HIGH → external antenna
-    turn_off_action:
-      - output.turn_off: ant_gpio2  # LOW → internal antenna
 
 # Buttons
 button:

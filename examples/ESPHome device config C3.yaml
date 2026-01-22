@@ -1,8 +1,0 @@
-substitutions:
-  device_name: esphomec3-office
-  friendly_name: Office C3
-  api_key: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
-  ota_password: "ChangeMe!2025"
-
-packages:
-  device: !include "common/Seeed xiao ESP32-c3 base.yaml"

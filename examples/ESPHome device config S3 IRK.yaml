@@ -1,9 +1,8 @@
 substitutions:
-  device_name: esphomec3-irk
-  friendly_name: IRK Capture C3
+  device_name: esphomes3-irk
+  friendly_name: IRK Capture S3
   api_key: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
   ota_password: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
 
 packages:
-  device: !include "common/seeed xiao ESP32-c3 base IRK.yaml"
-    
+  device: !include "common/Seeed xiao ESP32-s3 base IRK.yaml"

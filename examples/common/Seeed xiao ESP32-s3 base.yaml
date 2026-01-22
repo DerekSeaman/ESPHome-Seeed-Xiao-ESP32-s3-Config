@@ -1,21 +1,17 @@
 esp32:
-  variant: esp32c3
-  board: seeed_xiao_esp32c3
+  variant: esp32s3
+  board: seeed_xiao_esp32s3
   framework:
     type: esp-idf
 
 esphome:
   name: ${device_name}
   friendly_name: ${friendly_name}
-  on_boot:
-    priority: -10
-    then:
-      - output.turn_on: ant_gpio2  # HIGH → external antenna
 
 logger:
   level: DEBUG
   baud_rate: 115200
-  hardware_uart: USB_CDC
+  hardware_uart: USB_SERIAL_JTAG
 
 api:
   encryption:
@@ -49,19 +45,12 @@ captive_portal:
 
 mdns:
 
-# Status LED (C3 uses GPIO10, inverted)
+# Status LED on Seeed XIAO ESP32-S3 (GPIO21, user LED - active LOW)
 status_led:
   pin:
-    number: GPIO10
-    inverted: true
+    number: GPIO21
 
-# External antenna control
-output:
-  - platform: gpio
-    pin: GPIO2
-    id: ant_gpio2
-
-# BLE scanning and Bluetooth proxy for Home Assistant
+# ===== BLE & Bluetooth Proxy =====
 # Default Aggressive (100% duty cycle); user selection persists across reboots
 esp32_ble_tracker:
   id: ble_tracker
@@ -87,16 +76,16 @@ select:
       - "Balanced"
     set_action:
       - lambda: |-
-            auto opt = id(sel_ble_scan_profile).current_option();
-            if (opt == "Aggressive") {
-                id(ble_tracker).set_scan_interval(160);
-                id(ble_tracker).set_scan_window(160);
-                id(ble_tracker).set_scan_active(true);
-            } else {
-                id(ble_tracker).set_scan_interval(320);
-                id(ble_tracker).set_scan_window(160);
-                id(ble_tracker).set_scan_active(true);
-            }
+          auto opt = id(sel_ble_scan_profile).current_option();
+          if (opt == "Aggressive") {
+              id(ble_tracker).set_scan_interval(160);
+              id(ble_tracker).set_scan_window(160);
+              id(ble_tracker).set_scan_active(true);
+          } else {
+              id(ble_tracker).set_scan_interval(320);
+              id(ble_tracker).set_scan_window(160);
+              id(ble_tracker).set_scan_active(true);
+          }
 
 # Text sensors
 text_sensor:
@@ -113,17 +102,6 @@ text_sensor:
     bssid:
       name: "BSSID"
       entity_category: diagnostic
-
-# Switches
-switch:
-  - platform: template
-    name: "External Antenna"
-    optimistic: true
-    restore_mode: ALWAYS_ON
-    turn_on_action:
-      - output.turn_on: ant_gpio2   # HIGH → external antenna
-    turn_off_action:
-      - output.turn_off: ant_gpio2  # LOW → internal antenna
 
 # Buttons
 button:
@@ -158,7 +136,7 @@ sensor:
     accuracy_decimals: 0
     update_interval: 30s
     lambda: |-
-        return id(_wifi_disconnects_since_boot);
+      return id(_wifi_disconnects_since_boot);
 
 # Globals (since-boot only; not restored)
 globals:

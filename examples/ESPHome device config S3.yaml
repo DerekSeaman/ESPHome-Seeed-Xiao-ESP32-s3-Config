@@ -1,0 +1,8 @@
+substitutions:
+  device_name: esphomes3-office
+  friendly_name: Office s3
+  api_key: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
+  ota_password: "ChangeMe!2025"
+
+packages:
+  device: !include "common/Seeed xiao ESP32-s3 base.yaml"
