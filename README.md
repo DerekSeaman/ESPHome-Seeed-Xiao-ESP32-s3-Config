@@ -10,7 +10,7 @@ Quick overview
 
   - `examples/` — device example YAMLs and helpers.
 
-  - `examples/common/Seeed xiao ESP32-s3 base.yaml` — shared base configuration (board, wifi, API/OTA, sensors, antenna output).
+  - `examples/common/Seeed xiao ESP32-s3 base.yaml` — shared base configuration (board, wifi, API/OTA, sensors, BLE proxy).
 
   - `examples/common/Seeed xiao ESP32-s3 base IRK.yaml` — IRK capture variant base configuration.
 
@@ -39,7 +39,7 @@ What the base config provides:
 
 - Boot actions: none by default (add custom on_boot actions in your device YAML if needed).
 
-- Logger & status LED: configures serial log level (USB_CDC) and board LED (GPIO10) behavior.
+- Logger & status LED: configures serial log level (USB_SERIAL_JTAG) and board LED (GPIO21) behavior.
 
 - API & OTA: supports encrypted API (uses `${api_key}`) and OTA (uses `${ota_password}`).
 
@@ -61,7 +61,7 @@ This repository also includes an alternate configuration for capturing iPhone, A
 - **Base config**: `examples/common/Seeed xiao ESP32-s3 base IRK.yaml` — uses ESP-IDF framework with NimBLE for IRK capture
 - **Device example**: `examples/ESPHome device config S3 IRK.yaml` — minimal device configuration for IRK capture
 
-The IRK variant provides the same base features (antenna control, WiFi, sensors) but adds IRK capture functionality through the [irk-capture](https://github.com/DerekSeaman/irk-capture) external component.
+The IRK variant provides the same base features (WiFi, sensors) but adds IRK capture functionality through the [irk-capture](https://github.com/DerekSeaman/irk-capture) external component.
 
 **Device YAML example for IRK capture:**
 
@@ -122,7 +122,7 @@ This is an **ESPHome Device Builder package** designed to work seamlessly with t
 
 ## Status LED Patterns
 
-The onboard LED (GPIO10) provides visual feedback about the device state:
+The onboard LED (GPIO21) provides visual feedback about the device state:
 
 | Pattern | Meaning |
 |---------|---------|

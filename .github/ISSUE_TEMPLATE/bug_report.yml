@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a bug or issue with ESP32-C3 configuration
+description: Report a bug or issue with ESP32-S3 configuration
 title: "[Bug]: "
 labels: ["bug", "needs-triage"]
 body:
@@ -39,7 +39,7 @@ body:
       label: Steps to Reproduce
       description: How can we reproduce this issue?
       placeholder: |
-        1. Flash ESP32-C3 with...
+        1. Flash ESP32-S3 with...
         2. Configure...
         3. See error...
     validations:
@@ -58,10 +58,10 @@ body:
     id: board
     attributes:
       label: Board Type
-      description: Which Seeed Xiao ESP32-C3 board variant?
+      description: Which Seeed Xiao ESP32-S3 board variant?
       options:
-        - Seeed Xiao ESP32-C3 (standard)
-        - Seeed Xiao ESP32-C3 (custom variant)
+        - Seeed Xiao ESP32-S3 (standard)
+        - Seeed Xiao ESP32-S3 (custom variant)
         - Other (specify in additional context)
     validations:
       required: true
