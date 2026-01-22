@@ -103,7 +103,8 @@ This is an **ESPHome Device Builder package** designed to work seamlessly with t
    config/
    └── esphome/
        └── common/
-           └── Seeed xiao ESP32-s3 base.yaml  ← Place the base config here
+           ├── Seeed xiao ESP32-s3 base.yaml      ← Standard BLE proxy config
+           └── Seeed xiao ESP32-s3 base IRK.yaml  ← IRK capture config
    ```
 
 3. Copy the `Seeed xiao ESP32-s3 base.yaml` file to the `config/esphome/common/` directory
