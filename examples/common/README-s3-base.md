@@ -61,9 +61,10 @@ Key sections and what they do
 
   - `esp32_ble_tracker` and `bluetooth_proxy`: enable BLE scanning and proxying for Home Assistant presence detection.
 
-  - BLE scan parameters are configurable via a `select` entity with two profiles:
-    - **Aggressive** (default): 160ms interval, 160ms window (100% duty cycle) — maximum presence detection accuracy
-    - **Balanced**: 320ms interval, 160ms window (50% duty cycle) — reduced power consumption
+  - BLE scan parameters are configurable via a `select` entity with three profiles:
+    - **Low**: 320ms interval, 30ms window (9% duty cycle) — minimal power consumption
+    - **Medium** (default): 320ms interval, 90ms window (28% duty cycle) — balanced performance
+    - **High**: 320ms interval, 160ms window (50% duty cycle) — maximum presence detection accuracy
     - Profile selection persists across reboots via `restore_value: true`
 
 - `sensor` / `text_sensor` / `time` / `globals`:

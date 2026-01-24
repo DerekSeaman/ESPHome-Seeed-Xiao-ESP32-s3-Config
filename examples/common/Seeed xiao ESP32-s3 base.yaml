@@ -51,41 +51,45 @@ status_led:
     number: GPIO21
 
 # ===== BLE & Bluetooth Proxy =====
-# Default Aggressive (100% duty cycle); user selection persists across reboots
+# Default Medium (28% duty cycle); user selection persists across reboots
 esp32_ble_tracker:
   id: ble_tracker
   scan_parameters:
     active: true
-    interval: 160ms
-    window: 160ms
+    interval: 320ms
+    window: 90ms
     continuous: true
 
 bluetooth_proxy:
   active: true
 
-# Selector to switch only between Aggressive and Balanced
+# BLE Scan Profile selector: Low, Medium, High
 select:
   - platform: template
     name: "BLE Scan Profile"
     id: sel_ble_scan_profile
     optimistic: true
     restore_value: true
-    initial_option: "Aggressive"
+    initial_option: "Medium"
     options:
-      - "Aggressive"
-      - "Balanced"
+      - "Low"
+      - "Medium"
+      - "High"
     set_action:
       - lambda: |-
+          id(ble_tracker).stop_scan();
           auto opt = id(sel_ble_scan_profile).current_option();
-          if (opt == "Aggressive") {
-              id(ble_tracker).set_scan_interval(160);
-              id(ble_tracker).set_scan_window(160);
-              id(ble_tracker).set_scan_active(true);
+          if (opt == "Low") {
+              id(ble_tracker).set_scan_interval(320);
+              id(ble_tracker).set_scan_window(30);
+          } else if (opt == "Medium") {
+              id(ble_tracker).set_scan_interval(320);
+              id(ble_tracker).set_scan_window(90);
           } else {
               id(ble_tracker).set_scan_interval(320);
               id(ble_tracker).set_scan_window(160);
-              id(ble_tracker).set_scan_active(true);
           }
+          id(ble_tracker).start_scan();
 
 # Text sensors
 text_sensor:

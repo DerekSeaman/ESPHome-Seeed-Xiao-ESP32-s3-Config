@@ -46,8 +46,9 @@ What the base config provides:
 - Wi‑Fi: uses `!secret` for `wifi_ssid`, `wifi_password`, and `wifi_captive`; provides fallback captive AP settings with disconnect tracking.
 
 - BLE: enables BLE scanning and Bluetooth proxying with configurable scan profiles:
-  - **Aggressive** (default): 160ms interval, 160ms window (100% duty cycle) for maximum presence detection accuracy
-  - **Balanced**: 320ms interval, 160ms window (50% duty cycle) for reduced power consumption
+  - **Low**: 320ms interval, 30ms window (9% duty cycle) — minimal power consumption
+  - **Medium** (default): 320ms interval, 90ms window (28% duty cycle) — balanced performance
+  - **High**: 320ms interval, 160ms window (50% duty cycle) — maximum presence detection accuracy
   - Profile selection persists across reboots
 
 - Sensors: uptime, internal temperature, Wi‑Fi RSSI, Wi‑Fi info (BSSID, IP, SSID, MAC), Wi-Fi disconnects (since boot), and SNTP time.
@@ -141,7 +142,7 @@ Here's what the device looks like in Home Assistant's ESPHome integration:
 The device page shows:
 
 - **Device info**: Board type, firmware version, and MAC address
-- **Controls**: BLE Scan Profile selector (Aggressive/Balanced) and Restart Device button
+- **Controls**: BLE Scan Profile selector (Low/Medium/High) and Restart Device button
 - **Configuration**: Firmware management and OTA updates
 - **Diagnostic**: BSSID, internal temperature, IP address, MAC address, SSID, uptime, Wi-Fi disconnects (since boot), and Wi-Fi RSSI
 
