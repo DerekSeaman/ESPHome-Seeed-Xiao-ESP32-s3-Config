@@ -85,14 +85,6 @@ packages:
 - Advertises as a BLE Heart Rate Sensor (Apple) or Keyboard (Android) to trigger pairing
 - Automatically captures and publishes IRK keys during the pairing process
 
-**How it works:**
-
-1. Flash the device using ESPHome CLI or Device Builder
-2. The device advertises as a BLE Heart Rate Sensor (configurable name)
-3. Pair your iPhone, Apple Watch, or Android device with the advertised BLE device
-4. The IRK is automatically captured and published to Home Assistant sensors
-5. Use the captured IRKs with Home Assistant's [Private BLE Device](https://www.home-assistant.io/integrations/private_ble_device/) integration for reliable presence detection
-
 ## Using with ESPHome Device Builder
 
 This is an **ESPHome Device Builder package** designed to work seamlessly with the ESPHome Builder tool in Home Assistant:
