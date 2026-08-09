@@ -33,7 +33,7 @@ wifi:
 
 mdns:
 
-# GPIO21 = USER LED (active LOW) — solid ON when API connected, blinks when not
+# GPIO21 = USER LED (active LOW, no inverted: needed) — solid ON when API connected, blinks when not
 status_led:
   pin:
     number: GPIO21

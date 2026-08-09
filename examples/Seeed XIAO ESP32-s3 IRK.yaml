@@ -26,7 +26,8 @@ wifi:
         then:
             - component.update: wifi_channel_sensor
 
-# Status LED on Seeed XIAO ESP32-S3 (GPIO21, user LED - active LOW)
+# Status LED on Seeed XIAO ESP32-S3 (GPIO21, user LED - active LOW). No inverted: needed:
+# status_led's idle/good state already writes LOW, which is what lights an active-low LED.
 status_led:
     pin:
         number: GPIO21
