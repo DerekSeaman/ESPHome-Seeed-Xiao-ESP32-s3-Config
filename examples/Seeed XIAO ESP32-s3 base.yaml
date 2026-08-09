@@ -46,7 +46,6 @@ mdns:
 status_led:
     pin:
         number: GPIO21
-        inverted: true
 
 sensor:
     - platform: internal_temperature

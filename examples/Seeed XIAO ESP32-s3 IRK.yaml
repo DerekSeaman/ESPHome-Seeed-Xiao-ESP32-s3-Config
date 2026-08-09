@@ -30,7 +30,6 @@ wifi:
 status_led:
     pin:
         number: GPIO21
-        inverted: true
 
 sensor:
     - platform: template

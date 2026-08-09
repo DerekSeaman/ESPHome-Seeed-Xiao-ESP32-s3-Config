@@ -37,7 +37,6 @@ mdns:
 status_led:
   pin:
     number: GPIO21
-    inverted: true
 
 esp32_ble_tracker:
   id: ble_tracker
