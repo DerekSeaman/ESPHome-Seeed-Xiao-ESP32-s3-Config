@@ -1,122 +1,60 @@
-# Seeed XIAO ESP32‑S3 ESPHome Device Builder Package
+# Seeed Studio XIAO ESP32‑S3 ESPHome Device Builder Package
 
-This repository contains a reusable **ESPHome Device Builder package** for the Seeed XIAO ESP32‑S3 (esp32s3) boards. The project provides a shared base configuration package that can be included in device YAMLs to keep device files concise and consistent. The configuration is tailored for Home Assistant Bluetooth proxy and scanning functionality. I use it with the "Bermuda BLE Trilateration" HACS add-on for room-level presence detection.
+This repository contains a reusable **ESPHome Device Builder package** for the Seeed Studio XIAO ESP32‑S3 (esp32s3) boards. Several configurations are provided for you to choose from. Each configuration is covered below. These are designed to work with ESPHome Device Builder 2026.7 and later.
 
 Quick overview
 
-- Purpose: maintain one canonical, reusable base configuration for Seeed XIAO ESP32‑S3 boards and simple device examples that include it.
-
 - Layout:
 
-  - `examples/` — device example YAMLs and helpers.
+  - `examples/Seeed XIAO ESP32-s3 base.yaml` — S3 base configuration (board, wifi, sensors, status LED, etc.), no Bluetooth proxy
 
-  - `examples/common/Seeed xiao ESP32-s3 base.yaml` — shared base configuration (board, wifi, API/OTA, sensors, BLE proxy).
+  - `examples/Seeed XIAO ESP32-s3 IRK.yaml` — S3 board specifics designed to be used with my IRK Capture package (see below)
 
-  - `examples/common/Seeed xiao ESP32-s3 base IRK.yaml` — IRK capture variant base configuration.
+  - `examples/Seeed XIAO ESP32-s3 proxy.yaml` — S3 base configuration with customizable Bluetooth proxy functionality
 
-![Seeed XIAO ESP32-s3 PCB](docs/Seeed%20s3%20pcb.jpg)
+  - `examples/Seeed XIAO ESP32-s3 remote.yaml` — Package definition designed to be used with a generic ESPHome Device Builder S3 device configuration. This will reference one of the above configurations and dynamically pull it in at compile time.
 
-## How to use the base package
+![Seeed XIAO ESP32-S3 PCB](docs/Seeed%20s3%20pcb.jpg)
 
-The generic device YAML includes the ESP32-S3 base configuration via `packages` and provides substitutions:
-
-```yaml
-substitutions:
-  device_name: esphomes3-garage
-  friendly_name: Garage S3
-  api_key: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
-  ota_password: "ChangeMe!2025"
-
-packages:
-  device: !include "common/Seeed xiao ESP32-s3 base.yaml"
-```
-
-The base configuration uses the `${api_key}` and `${ota_password}` from your device specific YAML, uses `!secret` for Wi‑Fi values (managed by ESPHome Builder), and handles the `esphome:` section automatically.
-
-What the base config provides:
-
-- Board & SDK: selects `esp32s3` variant and `seeed_xiao_esp32s3` board with `esp-idf` framework.
-
-- Boot actions: none by default (add custom on_boot actions in your device YAML if needed).
-
-- Logger & status LED: configures serial log level (USB_SERIAL_JTAG) and board LED (GPIO21) behavior.
-
-- API & OTA: supports encrypted API (uses `${api_key}`) and OTA (uses `${ota_password}`).
-
-- Wi‑Fi: uses `!secret` for `wifi_ssid`, `wifi_password`, and `wifi_captive`; provides fallback captive AP settings with disconnect tracking.
-
-- BLE: enables BLE scanning and Bluetooth proxying with configurable scan profiles:
-  - **Low**: 320ms interval, 30ms window (9% duty cycle) — minimal power consumption
-  - **Medium** (default): 320ms interval, 90ms window (28% duty cycle) — balanced performance
-  - **High**: 320ms interval, 160ms window (50% duty cycle) — maximum presence detection accuracy
-  - Profile selection persists across reboots
-
-- Sensors: uptime, internal temperature, Wi‑Fi RSSI, Wi‑Fi info (BSSID, IP, SSID, MAC), Wi-Fi disconnects (since boot), and SNTP time.
-
-- Restart button: allows rebooting the device from Home Assistant.
-
-## IRK Capture Variant
-
-This repository also includes an alternate configuration for capturing iPhone, Apple Watch, and Android BLE Identity Resolving Keys (IRKs):
-
-- **Base config**: `examples/common/Seeed xiao ESP32-s3 base IRK.yaml` — uses ESP-IDF framework with NimBLE for IRK capture
-- **Device example**: `examples/ESPHome device config S3 IRK.yaml` — minimal device configuration for IRK capture
-
-The IRK variant provides the same base features (WiFi, sensors) but adds IRK capture functionality through the [irk-capture](https://github.com/DerekSeaman/irk-capture) external component.
-
-**Device YAML example for IRK capture:**
-
-```yaml
-substitutions:
-  device_name: esphomes3-irk
-  friendly_name: IRK Capture S3
-  api_key: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
-  ota_password: "ZmFrZWFwaWtleWZha2VleGFtcGxlZmFrZWtleQ=="
-
-packages:
-  device: !include "common/Seeed xiao ESP32-s3 base IRK.yaml"
-```
-
-**Key differences from the standard base:**
-
-- Uses **ESP-IDF framework** with NimBLE stack (native BLE support for IRK capture)
-- Bluetooth proxy and BLE tracker are disabled to avoid conflicts with IRK capture component
-- Includes IRK-specific text sensors, switches, and buttons
-- Advertises as a BLE Heart Rate Sensor (Apple) or Keyboard (Android) to trigger pairing
-- Automatically captures and publishes IRK keys during the pairing process
+**Key feature:** The XIAO ESP32-S3 has native USB and the most onboard resources (RAM/flash/PSRAM) in the Seeed XIAO ESP32 lineup, with a status LED for at-a-glance device state. No RF antenna switch on this board — just a single external antenna.
 
 ## Using with ESPHome Device Builder
 
-This is an **ESPHome Device Builder package** designed to work seamlessly with the ESPHome Builder tool in Home Assistant:
+This is an **ESPHome Device Builder package** designed to work seamlessly with the ESPHome Device Builder tool in Home Assistant. This has been tested with ESPHome Device Builder 2026.7.4. Follow these steps to create a new device with the custom Seeed Studio XIAO ESP32-S3 configuration:
 
-1. Install the ESPHome and ESPHome Device Builder add-ons from the Home Assistant Add-on Store
-2. In your ESPHome configuration directory, create a `common` folder:
+1. Install the **ESPHome Device Builder** add-on from the Home Assistant Add-on Store
+2. Go into the **ESPHome Device Builder** and in the upper right click on **+ Create device**
+3. Select **Create new project**
+4. Click on **ESP32-S3**, then type **Seeed** in the search boards field
+5. Click **+ Select** on the **Seeed Studio XIAO ESP32S3** card
+6. Enter a device name, click **Finish Setup**
+7. Paste the contents of the S3 remote file to the bottom of your ESPHome Device Builder template [S3 Remote File](https://github.com/DerekSeaman/ESPHome-Seeed-Xiao-ESP32-s3-Config/blob/main/examples/Seeed%20XIAO%20ESP32-s3%20remote.yaml)
+8. Depending on which version you want, modify **file:** as needed (proxy, base, IRK)
+9. Modify any other settings as needed, then install to your Seeed Studio XIAO ESP32-S3 device.
 
-   ```text
-   config/
-   └── esphome/
-       └── common/
-           ├── Seeed xiao ESP32-s3 base.yaml      ← Standard BLE proxy config
-           └── Seeed xiao ESP32-s3 base IRK.yaml  ← IRK capture config
-   ```
+Your configuration should look something like this, except your `ref:` should point to **main**.
 
-3. Copy the `Seeed xiao ESP32-s3 base.yaml` file to the `config/esphome/common/` directory
-   - For IRK capture functionality, use `Seeed xiao ESP32-s3 base IRK.yaml` instead (see [IRK Capture Variant](#irk-capture-variant) section)
-4. Create your device YAML using the minimal structure shown above:
-   - Update the `device_name` and `friendly_name` substitutions for your specific device
-   - Generate new `api_key` and `ota_password` values (ESPHome Builder can generate these)
-   - The file should include the base via `packages: device: !include "common/Seeed xiao ESP32-s3 base.yaml"`
-5. ESPHome Builder automatically handles:
-   - Wi-Fi secrets storage (no manual `secrets.yaml` needed)
-   - Firmware compilation
-   - Initial upload to your ESP32-S3 device
-6. The device will automatically be discovered by Home Assistant
+![YAML Example](docs/YAML-config.jpg)
 
-**Note:** The base configuration uses `!secret` references for Wi-Fi credentials, which ESPHome Builder manages automatically. You only need to provide the `api_key` and `ota_password` substitutions in your device YAML. To get fresh API and OTA keys, I suggest creating a new device in ESPHome Device Builder (using any hardware model), then replace all of the YAML with my device file but re-use the fresh API/OTA keys.
+## IRK Configuration Details
+
+I built a special S3 IRK configuration that is designed to be used with my IRK Capture package for ESPHome. It can be found at: [DerekSeaman/irk-capture](https://github.com/DerekSeaman/irk-capture). This eliminates some of the duplicate settings already built into my IRK Capture package and only adds the unique settings needed for the Seeed Studio XIAO ESP32-S3.
+
+## Bluetooth Proxy
+
+If you use the **proxy** configuration, your S3 will act as a Bluetooth proxy with three selectable BLE scan profiles:
+
+- **Low**: 200ms interval, 18.75ms window (9% duty cycle) — minimal power consumption
+- **Medium** (default): 200ms interval, 56.25ms window (28% duty cycle) — balanced performance
+- **High**: 200ms interval, 100ms window (50% duty cycle) — maximum presence detection accuracy
+
+Profile selection persists across reboots. If you are using the proxy with room-level presence detection, medium or high is recommended. Otherwise, low should be sufficient and will use less Wi-Fi bandwidth.
+
+![BLE Scanner Profiles](docs/BLE-proxy.jpg)
 
 ## Status LED Patterns
 
-The onboard LED (GPIO21) provides visual feedback about the device state:
+The onboard LED (GPIO21, active LOW) provides visual feedback about the device state:
 
 | Pattern | Meaning |
 |---------|---------|
@@ -127,27 +65,13 @@ The onboard LED (GPIO21) provides visual feedback about the device state:
 
 ## ESPHome Device Page
 
-Here's what the device looks like in Home Assistant's ESPHome integration:
+Here's what the proxy device looks like in Home Assistant's ESPHome integration:
 
 ![ESPHome Device Page](docs/screenshot-1.jpg)
 
 The device page shows:
 
 - **Device info**: Board type, firmware version, and MAC address
-- **Controls**: BLE Scan Profile selector (Low/Medium/High) and Restart Device button
+- **Controls**: BLE Scan Profile selector (Low/Medium/High)
 - **Configuration**: Firmware management and OTA updates
-- **Diagnostic**: BSSID, internal temperature, IP address, MAC address, SSID, uptime, Wi-Fi disconnects (since boot), and Wi-Fi RSSI
-
-## IRK Capture Device Page
-
-Here's what the IRK capture variant looks like in Home Assistant:
-
-![IRK Capture Device Page](docs/screenshot-irk.jpg)
-
-The IRK capture device page shows:
-
-- **Device info**: Board type, firmware version, and MAC address
-- **Controls**: BLE Advertising toggle, BLE Device Name input, BLE Profile selector, Generate New MAC button, and Restart Device button
-- **Sensors**: Device MAC (paired device address), Effective MAC (current BLE advertising address), and IRK (captured Identity Resolving Key)
-- **Configuration**: Firmware management and OTA updates
-- **Diagnostic**: BSSID, internal temperature, IP address, MAC address, SSID, uptime, Wi-Fi disconnects (since boot), and Wi-Fi RSSI
+- **Diagnostic**: BSSID, internal temperature, IP address, MAC address, SSID, uptime, Wi-Fi Channel, Wi-Fi disconnects (since boot), and Wi-Fi RSSI

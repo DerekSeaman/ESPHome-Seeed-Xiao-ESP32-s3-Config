@@ -1,0 +1,47 @@
+# Seeed XIAO ESP32-S3 hardware add-on for IRK capture: status LED and Wi-Fi channel
+# diagnostics. No RF switch on this board — it supports an external antenna only, no antenna
+# switching needed.
+# Intended to be added as a `packages:` entry alongside the generic irk-capture package
+# (https://github.com/DerekSeaman/irk-capture) on top of an ESPHome Device Builder-generated
+# device YAML. Everything the irk-capture package or the device YAML already provides
+# (logger level/baud_rate, api, wifi credentials/power/roaming/disconnect-tracking, mdns,
+# BLE/IRK capture, MAC/SSID/RSSI diagnostics, restart button, globals, sntp time) is
+# intentionally left out here to avoid duplicating/conflicting with those.
+
+esp32:
+    # Explicit board ID (not just variant) for correct board-specific defaults.
+    board: seeed_xiao_esp32s3
+
+esphome:
+    includes:
+        - <esp_wifi.h>
+
+logger:
+    hardware_uart: USB_SERIAL_JTAG
+
+wifi:
+    enable_btm: true  # 802.11v BSS Transition Management (AP-coordinated roaming)
+    enable_rrm: true  # 802.11k Radio Resource Management (neighbor-assisted scanning)
+    on_connect:
+        then:
+            - component.update: wifi_channel_sensor
+
+# Status LED on Seeed XIAO ESP32-S3 (GPIO21, user LED - active LOW)
+status_led:
+    pin:
+        number: GPIO21
+        inverted: true
+
+sensor:
+    - platform: template
+      name: "Wi-Fi Channel"
+      id: wifi_channel_sensor
+      entity_category: diagnostic
+      accuracy_decimals: 0
+      update_interval: 60s
+      lambda: |-
+          wifi_ap_record_t ap_info;
+          if (esp_wifi_sta_get_ap_info(&ap_info) == ESP_OK) {
+            return (float) ap_info.primary;
+          }
+          return NAN;

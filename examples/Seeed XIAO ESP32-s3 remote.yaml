@@ -1,0 +1,6 @@
+packages:
+  s3_device:
+    url: https://github.com/DerekSeaman/ESPHome-Seeed-Xiao-ESP32-s3-Config
+    ref: main
+    file: "examples/Seeed XIAO ESP32-s3 proxy.yaml"
+    refresh: always
